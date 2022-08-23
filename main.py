@@ -25,7 +25,6 @@ def main_input_window():
     window.close()
     return values
 
-
 def get_locations():
     headers = {
         'Content-Type': 'application/json'
@@ -99,4 +98,7 @@ if __name__ == '__main__':
     name_column = get_name_col()
     locations = get_locations()
     items['SearchResult'] = items.apply(lambda row: find_item(row[name_column]), axis=1)
-    items.to_excel('searchResult.xlsx', index=False)
+    
+    old_file = file.split('\\')[-1].split('.')[0]
+    new_file = f'{old_file}-results.xlsx'
+    items.to_excel(new_file, index=False)
