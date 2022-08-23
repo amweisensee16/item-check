@@ -3,6 +3,7 @@ import pandas
 import json
 import PySimpleGUI as sg
 
+
 def main_input_window():
     # Open main window
     layout = [
@@ -78,7 +79,7 @@ def get_name_col():
 if __name__ == '__main__':
     username = 'admin'
     password = 'sunbird'
-    
+
     user_input = False
     while user_input == False:
         user_input = main_input_window()
@@ -91,7 +92,7 @@ if __name__ == '__main__':
             items = pandas.read_csv(file)
         else:
             sg.popup_error('File type must be xlsx or csv')
-    
+
     host = user_input['host']
     username = user_input['username']
     password = user_input['password']
