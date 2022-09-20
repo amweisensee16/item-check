@@ -1,8 +1,30 @@
+from unittest import result
 import requests
 import pandas
 import json
 import PySimpleGUI as sg
 
+def update_progress_window(window, percent):
+    event, values = window.read(timeout=10)
+    if event == 'Cancel' or event == sg.WIN_CLOSED:
+        exit()
+    window['-PROG-'].update(percent)
+
+def create_progress_window():
+    progress_layout = [
+        [sg.Text('Searching for items')],
+        [sg.ProgressBar(100, orientation='h', size=(20,20), key='-PROG-')]
+        ]
+
+    progress = sg.Window('Working. Please wait.', 
+                         layout=progress_layout, 
+                         finalize=True, 
+                         keep_on_top=True, 
+                         icon='sunbird-logo.ico',
+                         grab_anywhere=True,
+                         no_titlebar=True
+                         )
+    return progress
 
 def main_input_window():
     # Open main window
@@ -37,7 +59,11 @@ def get_locations():
     locations = [location['id'] for location in r.json()['locations']]
     return locations
     
-def find_item(item_name):
+def find_item(item_name, progress_window=False, percent_complete=False):
+    
+    if progress_window and percent_complete:
+        update_progress_window(percent=percent_complete, window=progress_window)
+    
     headers = {
         'Content-Type': 'application/json'
     }
@@ -97,8 +123,20 @@ if __name__ == '__main__':
     password = user_input['password']
     name_column = get_name_col()
     locations = get_locations()
-    items['SearchResult'] = items.apply(lambda row: find_item(row[name_column]), axis=1)
+    progress_window = create_progress_window()
+    lookup_items = items[name_column]
+    results = []
+    sg.popup_notify(title=f'Processing {len(lookup_items)} items')
+    
+    for count, item in enumerate(lookup_items):
+        percent_complete = (count + 1) / len(lookup_items) * 100
+        update_progress_window(window=progress_window, percent=percent_complete)
+        search_result = find_item(item)
+        results.append({'Name': item, 'Result': search_result})
+    
+    output = pandas.DataFrame(results)
     
     old_file = file.split('\\')[-1].split('.')[0]
     new_file = f'{old_file}-results.xlsx'
-    items.to_excel(new_file, index=False)
+    output.to_excel(new_file, index=False)
+    sg.popup_notify(f'{new_file} saved!')
