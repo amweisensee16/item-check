@@ -58,7 +58,7 @@ def get_locations():
                     )
     locations = [location['id'] for location in r.json()['locations']]
     return locations
-    
+
 def find_item(item_name, progress_window=False, percent_complete=False):
     
     if progress_window and percent_complete:
@@ -68,11 +68,15 @@ def find_item(item_name, progress_window=False, percent_complete=False):
         'Content-Type': 'application/json'
     }
     body = {
-        'searchString': item_name,
-        'locations': locations,
-        'limit': 50
+        'columns':[
+            {'name':'tiName','filter':{'eq':item_name}}
+        ],
+        'selectedColumns':[
+            {'name':'tiName'},
+            {'name':'cmbLocation'}
+        ]
     }
-    r = requests.post(f'https://{host}/api/v2/dcimoperations/search/list/items', 
+    r = requests.post(f'https://{host}/api/v2/quicksearch/items?pageSize=0', 
                       data=json.dumps(body), 
                       verify=False,
                       auth=(username, password),
@@ -80,7 +84,10 @@ def find_item(item_name, progress_window=False, percent_complete=False):
                     )
     if r.status_code == 400:
         return False
-    exact_match = [item['cmbLocation'] for item in r.json()['items'] if item['tiName'] == item_name]
+#    result_len = r.json()['count']
+    results = r.json()['searchResults']['items']
+#    page=0
+    exact_match = [item['cmbLocation'] for item in results if item['tiName'] == item_name]
     if len(exact_match) > 0:
         return exact_match[0]
     else:
