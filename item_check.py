@@ -5,6 +5,11 @@ import json
 import streamlit as st
 from io import BytesIO
 
+# Disable the warnings
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+
 # For debugging in vscode
 debug = False
 if debug:

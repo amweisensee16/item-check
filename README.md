@@ -4,6 +4,6 @@ If the item name is not found, the tool returns FALSE. If the item is found, the
 
 # How To
 1. Download the python code
-2. Make it run at boot (add to crontab `@reboot streamlit run item_check.py --server.port 8080`)
+2. Make it run at boot (add to crontab `@reboot streamlit run item_check.py --server.address <ip> --server.port 8080`)
 3. Go to the site: http<ip>:8080
 4. Follow the on-screen instructions
