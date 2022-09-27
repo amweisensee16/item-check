@@ -15,5 +15,5 @@ sleep 3
 /usr/bin/tmux send-keys -t 0 "streamlit run <path>/item-check/item_check.py --server.address <ip> --server.port <port> --server.headless true" ENTER
 echo "$(date) ${1} RESTARTED NODE"
 ```
-4. Go to the site: http<ip>:8080
+4. Go to the site: `http://<ip>:<port>`, be sure to use the IP and port that was set in the script.
 5. Follow the on-screen instructions
