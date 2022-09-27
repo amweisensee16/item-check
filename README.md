@@ -4,6 +4,16 @@ If the item name is not found, the tool returns FALSE. If the item is found, the
 
 # How To
 1. Download the python code
-2. Make it run at boot (add to crontab `@reboot streamlit run item_check.py --server.address <ip> --server.port 8080`)
-3. Go to the site: http<ip>:8080
-4. Follow the on-screen instructions
+2. Make it run at boot (add to crontab `@reboot         <user>    <path>/item-check/item_check.sh`)
+3. The content of `item_check.sh` should be something like:
+```bash
+#!/bin/bash
+PATH=/usr/local/bin
+/usr/bin/tmux new-session -d -s ENTER
+/usr/bin/tmux detach -s ENTER
+sleep 3
+/usr/bin/tmux send-keys -t 0 "streamlit run <path>/item-check/item_check.py --server.address <ip> --server.port <port> --server.headless true" ENTER
+echo "$(date) ${1} RESTARTED NODE"
+```
+4. Go to the site: http<ip>:8080
+5. Follow the on-screen instructions
